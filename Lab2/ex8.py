@@ -3,8 +3,12 @@ def filter_characters(x=1, strings=[], flag=True):
     for string in strings:
         char_list = []
         for char in string:
-            if (ord(char) % x == 0) if flag else (ord(char) % x != 0): 
-                char_list.append(char)
+            if flag:
+                if (ord(char) % x == 0):   
+                    char_list.append(char)
+            else:
+                if (ord(char) % x != 0):
+                    char_list.append(char)
         result_lists.append(char_list)
     return result_lists
 

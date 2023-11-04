@@ -1,8 +1,21 @@
 def list_operations(a, b):
-    intersection = list(set(a) & set(b))
-    union = list(set(a) | set(b))
-    a_minus_b = list(set(a) - set(b))
-    b_minus_a = list(set(b) - set(a))
+    # Intersection
+    intersection = []
+    for x in a:
+        if x in b:
+            intersection.append(x)
+    # Union
+    union = list(a)
+    for x in b:
+        if x not in union:
+            union.append(x)
+
+    # Elements in a but not in b
+    a_minus_b = [x for x in a if x not in b]
+
+    # Elements in b but not in a
+    b_minus_a = [x for x in b if x not in a]
+
     return intersection, union, a_minus_b, b_minus_a
 
 def main():
@@ -17,3 +30,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+#refa
