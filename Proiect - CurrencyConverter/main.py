@@ -42,6 +42,8 @@ def center_window(root):
     root.geometry(f"{window_width}x{window_height}+{x}+{y}")
     root.update_idletasks()
 
+
+
 def graphics(currencies):
     root = Tk()
     center_window(root)
@@ -75,7 +77,18 @@ def graphics(currencies):
     dropdown_to_currency = ttk.Combobox(window, textvariable=to_currency, values=list(currencies.keys()), height=5, font=('Candara', 15), justify='center',state='readonly', width=10)
     dropdown_to_currency.grid(column=3, row=2, sticky=(W, E), padx=5)
 
-    calculate_button = ttk.Button(window, text="Calculate", command=convert_currency, style='My.TButton')
+    result_label = ttk.Label(window, text="", font=("Candara", 15))
+    result_label.grid(column=2, row=2, sticky=(W,E))
+
+    def calculate_and_display():
+        amount = float(amount_input.get())
+        from_curr = from_currency.get()
+        to_curr = to_currency.get()
+        result = convert_currency(amount, from_curr, to_curr, currencies)
+        result_label.config(text=str(result))
+
+
+    calculate_button = ttk.Button(window, text="Calculate", command=calculate_and_display, style='My.TButton')
     calculate_button.grid(column=2, row=3, sticky=(W,E))
 
     root.mainloop()
