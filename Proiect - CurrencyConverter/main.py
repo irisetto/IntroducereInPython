@@ -3,28 +3,27 @@ from bs4 import BeautifulSoup
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-
-
-
+import time
 
 def get_currencies():
-    response = requests.get("https://www.bnr.ro/nbrfxrates.xml")
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.content, 'lxml-xml')
-        currencies = soup.find_all('Rate')
-        currency_rates = {}
-        for currency in currencies:
-            currency_name = currency.get('currency')
-            currency_value = currency.text
-            currency_rates[currency_name] = currency_value
+    while True:
+        response = requests.get("https://www.bnr.ro/nbrfxrates.xml")
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'lxml-xml')
+            currencies = soup.find_all('Rate')
+            currency_rates = {}
+            for currency in currencies:
+                currency_name = currency.get('currency')
+                currency_value = currency.text
+                currency_rates[currency_name] = currency_value
 
-        currency_rates['RON'] = 1.0
-        currency_rates = dict(sorted(currency_rates.items()))
+            currency_rates['RON'] = 1.0
+            currency_rates = dict(sorted(currency_rates.items()))
 
-        return currency_rates
-    else:
-        raise ValueError("Couldn't get currencies")
-    
+            return currency_rates
+        else:
+            time.sleep(5)
+
 def convert_currency(amount, from_currency, to_currency, currency_rates):
     amount_in_ron = amount * float(currency_rates[from_currency])
    
@@ -43,15 +42,14 @@ def center_window(root):
     root.update_idletasks()
 
 
-
 def graphics(currencies):
     root = Tk()
     center_window(root)
     root.title("Convertor valutar")
     window = ttk.Frame(master=root, padding="3 3 12 12", width=600, height=400)
     window.pack(expand=True)
-    style2 = ttk.Style()
-    style2.configure('My.TButton', font=('Candara', 15))
+    style = ttk.Style()
+    style.configure('My.TButton', font=('Candara', 15))
 
     window.grid_columnconfigure([1,2,3], weight=1, minsize=100)
     window.grid_rowconfigure([1,2,3], weight=1, minsize=70)
@@ -66,7 +64,6 @@ def graphics(currencies):
     from_currency.set(list(currencies.keys())[0])
 
     dropdown_from_currency = ttk.Combobox(window, textvariable=from_currency, values=list(currencies.keys()), height=5, font=('Candara', 15), justify='center', state='readonly', width=10)
-    # dropdown_from_currency = ttk.OptionMenu(window, from_currency, *currencies.keys(), style='My.TMenubutton', direction='right')
     dropdown_from_currency.grid(column=3, row=1, sticky=(W,E), padx=5)
 
     to_currency = StringVar(window)
@@ -81,7 +78,11 @@ def graphics(currencies):
     result_label.grid(column=2, row=2, sticky=(W,E))
 
     def calculate_and_display():
-        amount = float(amount_input.get())
+        try:
+            amount = float(amount_input.get())
+        except ValueError:
+            result_label.config(text="Invalid amount")
+            return
         from_curr = from_currency.get()
         to_curr = to_currency.get()
         result = convert_currency(amount, from_curr, to_curr, currencies)
@@ -96,15 +97,8 @@ def graphics(currencies):
 def main():
     try:
         currencies= get_currencies()
-        print(currencies)
         graphics(currencies)
-        # amount = (float)(input("Enter amount: "))
-        # from_currency = input("Enter from currency: ")
-        # to_currency = input("Enter to currency: ")
-        # amount_transformed= convert_currency(amount, from_currency.upper(), to_currency.upper(), currency_rates)
-        # print(amount_transformed)
         
-
     except ValueError as error:
         print(error)
 
