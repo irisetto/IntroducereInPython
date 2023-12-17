@@ -77,6 +77,15 @@ def graphics(currencies):
     result_label = ttk.Label(window, text="", font=("Candara", 15))
     result_label.grid(column=2, row=2, sticky=(W,E))
 
+    def swap_currencies():
+        from_curr = from_currency.get()
+        to_curr = to_currency.get()
+        from_currency.set(to_curr)
+        to_currency.set(from_curr)
+
+    swap_button = ttk.Button(window, text="↔", command=swap_currencies)
+    swap_button.grid(column=3, row=3)
+
     def calculate_and_display():
         try:
             amount = float(amount_input.get())
